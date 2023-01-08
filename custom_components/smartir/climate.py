@@ -18,7 +18,8 @@ from homeassistant.core import callback
 from homeassistant.helpers.event import async_track_state_change
 import homeassistant.helpers.config_validation as cv
 from homeassistant.helpers.restore_state import RestoreEntity
-from . import COMPONENT_ABS_DIR, Helper
+from .constant import COMPONENT_ABS_DIR
+from .helper import Helper
 from .controller import get_controller
 
 _LOGGER = logging.getLogger(__name__)
@@ -354,7 +355,7 @@ class SmartIRClimate(ClimateEntity, RestoreEntity):
             await self.async_set_hvac_mode(self._operation_modes[1])
 
     async def async_batch_set(self, hvac_mode, fan_mode, swing_mode, temperature):
-        _LOGGER.info(f'SmartIRClimate({self.entity_id}) batch sets hvac_mode: {hvac_mode}, fan_mode: {fan_mode}, swing_mode: {swing_mode}, temperature: {temperature}')
+        _LOGGER.info(f'SmartIRClimate({self._unique_id}) batch sets hvac_mode: {hvac_mode}, fan_mode: {fan_mode}, swing_mode: {swing_mode}, temperature: {temperature}')
         if hvac_mode not in self._operation_modes:
             _LOGGER.warning('The havc_mode value is invalid')
             return
@@ -378,8 +379,10 @@ class SmartIRClimate(ClimateEntity, RestoreEntity):
                 else:
                     self._target_temperature = round(temperature, 1)
             self._last_on_operation = hvac_mode
-            self._current_fan_mode = fan_mode
-            self._current_swing_mode = swing_mode
+            if fan_mode is not None:
+                self._current_fan_mode = fan_mode
+            if swing_mode is not None:
+                self._current_swing_mode = swing_mode
 
         await self.send_command()
         await self.async_update_ha_state()

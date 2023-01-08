@@ -15,7 +15,8 @@ from homeassistant.const import (
     CONF_NAME, STATE_OFF, STATE_ON, STATE_UNKNOWN)
 import homeassistant.helpers.config_validation as cv
 from homeassistant.helpers.restore_state import RestoreEntity
-from . import COMPONENT_ABS_DIR, Helper
+from .constant import COMPONENT_ABS_DIR
+from .helper import Helper
 from .controller import get_controller
 
 _LOGGER = logging.getLogger(__name__)
