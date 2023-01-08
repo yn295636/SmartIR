@@ -353,6 +353,37 @@ class SmartIRClimate(ClimateEntity, RestoreEntity):
         else:
             await self.async_set_hvac_mode(self._operation_modes[1])
 
+    async def async_batch_set(self, hvac_mode, fan_mode, swing_mode, temperature):
+        _LOGGER.info(f'SmartIRClimate({self.entity_id}) batch sets hvac_mode: {hvac_mode}, fan_mode: {fan_mode}, swing_mode: {swing_mode}, temperature: {temperature}')
+        if hvac_mode not in self._operation_modes:
+            _LOGGER.warning('The havc_mode value is invalid')
+            return
+        if fan_mode is not None and fan_mode not in self._fan_modes:
+            _LOGGER.warning('The fan_mode value is invalid')
+            return
+        if swing_mode is not None and swing_mode not in self._swing_modes:
+            _LOGGER.warning('The swing_mode value is invalid')
+            return
+
+        self._hvac_mode = hvac_mode
+
+        if not hvac_mode == HVAC_MODE_OFF:
+            if temperature is not None:
+                if temperature < self._min_temperature:
+                    temperature = self._min_temperature
+                if temperature > self._max_temperature:
+                    temperature = self._max_temperature
+                if self._precision == PRECISION_WHOLE:
+                    self._target_temperature = round(temperature)
+                else:
+                    self._target_temperature = round(temperature, 1)
+            self._last_on_operation = hvac_mode
+            self._current_fan_mode = fan_mode
+            self._current_swing_mode = swing_mode
+
+        await self.send_command()
+        await self.async_update_ha_state()
+
     async def send_command(self):
         async with self._temp_lock:
             try:
