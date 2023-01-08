@@ -2,3 +2,5 @@ check_updates:
   description: Check for SmartIR updates.
 update_component:
   description: Update SmartIR component.
+ac_batch_command:
+  description: Send one command with batched operations.

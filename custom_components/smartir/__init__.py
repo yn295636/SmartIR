@@ -12,9 +12,11 @@ import voluptuous as vol
 
 from aiohttp import ClientSession
 from homeassistant.const import (
-    ATTR_FRIENDLY_NAME, __version__ as current_ha_version)
+    ATTR_FRIENDLY_NAME, __version__ as current_ha_version, ATTR_ENTITY_ID, Platform)
 import homeassistant.helpers.config_validation as cv
 from homeassistant.helpers.typing import ConfigType
+
+from .climate import SmartIRClimate
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -42,6 +44,16 @@ CONFIG_SCHEMA = vol.Schema({
     })
 }, extra=vol.ALLOW_EXTRA)
 
+SCHEMA_AC_BATCH_COMMAND = vol.Schema(
+    {
+        vol.Optional(ATTR_ENTITY_ID): cv.entity_domain(Platform.CLIMATE),
+        vol.Required('mode'): cv.string,
+        vol.Optional('temperature'): cv.positive_float,
+        vol.Optional('fan'): cv.string,
+        vol.Optional('swing'): cv.string,
+    }
+)
+
 async def async_setup(hass, config):
     """Set up the SmartIR component."""
     conf = config.get(DOMAIN)
@@ -58,8 +70,20 @@ async def async_setup(hass, config):
     async def _update_component(service):
         await _update(hass, update_branch, True)
 
+    async def _send_ac_batch_command(service):
+        entity_id = service.data.get(ATTR_ENTITY_ID)
+        entity_obj = hass.data[Platform.CLIMATE]['entities'].get(entity_id)
+        if entity_obj is None or not isinstance(entity_obj, SmartIRClimate):
+            return
+        entity_obj: SmartIRClimate
+        await entity_obj.async_batch_set(service.data.get('mode'),
+                                         service.data.get('fan'),
+                                         service.data.get('swing'),
+                                         service.data.get('temperature'))
+
     hass.services.async_register(DOMAIN, 'check_updates', _check_updates)
     hass.services.async_register(DOMAIN, 'update_component', _update_component)
+    hass.services.async_register(DOMAIN, 'ac_batch_command', _send_ac_batch_command, schema=SCHEMA_AC_BATCH_COMMAND)
 
     if check_updates:
         await _update(hass, update_branch, False, False)
