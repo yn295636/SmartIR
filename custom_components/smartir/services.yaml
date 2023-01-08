@@ -2,3 +2,44 @@ check_updates:
   description: Check for SmartIR updates.
 update_component:
   description: Update SmartIR component.
+ac_batch_command:
+  name: AC Batch Command
+  description: Send one command with batched operations to an air conditioner.
+  fields:
+    entity_id:
+      name: Entity
+      description: ID of the entity.
+      example: climate.bedroom_ac
+      required: true
+      selector:
+        entity:
+          integration: smartir
+          domain: climate
+    mode:
+      name: Operation
+      description: AC operation mode.
+      example: cool
+      required: true
+      selector:
+        text:
+    temperature:
+      name: Temperature
+      description: AC target temperature.
+      example: 22
+      selector:
+        number:
+          min: 10
+          max: 40
+          mode: box
+    fan:
+      name: Fan Speed
+      description: AC fan speed.
+      example: "Auto"
+      selector:
+        text:
+    swing:
+      name: Swing Mode
+      description: AC swing mode.
+      example: Swing
+      selector:
+        text:
