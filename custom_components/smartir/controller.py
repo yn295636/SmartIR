@@ -6,7 +6,7 @@ import logging
 import json
 
 from homeassistant.const import ATTR_ENTITY_ID
-from . import Helper
+from .helper import Helper
 
 _LOGGER = logging.getLogger(__name__)
 
