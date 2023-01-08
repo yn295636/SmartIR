@@ -14,6 +14,7 @@ ac_batch_command:
       selector:
         entity:
           integration: smartir
+          domain: climate
     mode:
       name: Operation
       description: AC operation mode.
