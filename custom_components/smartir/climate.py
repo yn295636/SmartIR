@@ -390,7 +390,7 @@ class SmartIRClimate(ClimateEntity, RestoreEntity):
                 self._current_swing_mode = swing_mode
 
         await self.send_command()
-        await self.async_update_ha_state()
+        self.async_write_ha_state()
 
     async def send_command(self):
         async with self._temp_lock:

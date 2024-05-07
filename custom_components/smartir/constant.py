@@ -1,7 +1,7 @@
 import os
 
 DOMAIN = 'smartir'
-VERSION = '1.17.6'
+VERSION = '1.17.9'
 MANIFEST_URL = (
     "https://raw.githubusercontent.com/"
     "smartHomeHub/SmartIR/{}/"
