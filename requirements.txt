@@ -1,5 +1,5 @@
-homeassistant==2022.4.0
+homeassistant==2025.5.0
 aiohttp
 requests
 voluptuous
-aiofiles
+aiofiles>=0.6.0
