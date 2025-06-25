@@ -374,7 +374,7 @@ class SmartIRClimate(ClimateEntity, RestoreEntity):
 
         self._hvac_mode = hvac_mode
 
-        if not hvac_mode == HVAC_MODE_OFF:
+        if not hvac_mode == HVACMode.OFF:
             if temperature is not None:
                 if temperature < self._min_temperature:
                     temperature = self._min_temperature
